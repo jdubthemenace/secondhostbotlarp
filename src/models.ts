@@ -9,11 +9,14 @@ export interface IPhoneModelMeta {
   exposureTimeStr: string;
   focalLength: number;
   focalLengthIn35mm: number;
-  /** Megapixels reported in EXIF for every processed image. */
+  /** Megapixels reported in EXIF and used to pick output resolution. */
   megapixels: number;
 }
 
-const MP = 48;
+/** Normal (non-Pro) iPhones report 12 MP — matches default iPhone Photo mode. */
+const MP_NORMAL = 12;
+/** Pro and Pro Max iPhones report 24 MP — ProRAW-style higher-res output. */
+const MP_PRO = 24;
 
 function lens(modelName: string, focal: number, fnum: number): string {
   return `${modelName} back camera ${focal}mm f/${fnum}`;
@@ -31,7 +34,7 @@ export const IPHONE_MODELS: IPhoneModelMeta[] = [
     exposureTimeStr: "1/120",
     focalLength: 5.7,
     focalLengthIn35mm: 26,
-    megapixels: MP,
+    megapixels: MP_NORMAL,
   },
   {
     key: "ip14p",
@@ -44,7 +47,7 @@ export const IPHONE_MODELS: IPhoneModelMeta[] = [
     exposureTimeStr: "1/250",
     focalLength: 6.86,
     focalLengthIn35mm: 24,
-    megapixels: MP,
+    megapixels: MP_PRO,
   },
   {
     key: "ip15",
@@ -57,7 +60,7 @@ export const IPHONE_MODELS: IPhoneModelMeta[] = [
     exposureTimeStr: "1/200",
     focalLength: 5.96,
     focalLengthIn35mm: 26,
-    megapixels: MP,
+    megapixels: MP_NORMAL,
   },
   {
     key: "ip15p",
@@ -70,7 +73,7 @@ export const IPHONE_MODELS: IPhoneModelMeta[] = [
     exposureTimeStr: "1/250",
     focalLength: 6.86,
     focalLengthIn35mm: 24,
-    megapixels: MP,
+    megapixels: MP_PRO,
   },
   {
     key: "ip15pm",
@@ -83,7 +86,7 @@ export const IPHONE_MODELS: IPhoneModelMeta[] = [
     exposureTimeStr: "1/250",
     focalLength: 6.86,
     focalLengthIn35mm: 24,
-    megapixels: MP,
+    megapixels: MP_PRO,
   },
   {
     key: "ip16",
@@ -96,7 +99,7 @@ export const IPHONE_MODELS: IPhoneModelMeta[] = [
     exposureTimeStr: "1/200",
     focalLength: 5.96,
     focalLengthIn35mm: 26,
-    megapixels: MP,
+    megapixels: MP_NORMAL,
   },
   {
     key: "ip16p",
@@ -109,7 +112,7 @@ export const IPHONE_MODELS: IPhoneModelMeta[] = [
     exposureTimeStr: "1/250",
     focalLength: 6.765,
     focalLengthIn35mm: 24,
-    megapixels: MP,
+    megapixels: MP_PRO,
   },
   {
     key: "ip16pm",
@@ -122,7 +125,7 @@ export const IPHONE_MODELS: IPhoneModelMeta[] = [
     exposureTimeStr: "1/250",
     focalLength: 6.765,
     focalLengthIn35mm: 24,
-    megapixels: MP,
+    megapixels: MP_PRO,
   },
   {
     key: "ip17",
@@ -135,7 +138,7 @@ export const IPHONE_MODELS: IPhoneModelMeta[] = [
     exposureTimeStr: "1/200",
     focalLength: 5.96,
     focalLengthIn35mm: 26,
-    megapixels: MP,
+    megapixels: MP_NORMAL,
   },
   {
     key: "ip17p",
@@ -148,7 +151,7 @@ export const IPHONE_MODELS: IPhoneModelMeta[] = [
     exposureTimeStr: "1/250",
     focalLength: 6.86,
     focalLengthIn35mm: 24,
-    megapixels: MP,
+    megapixels: MP_PRO,
   },
   {
     key: "ip17pm",
@@ -161,7 +164,7 @@ export const IPHONE_MODELS: IPhoneModelMeta[] = [
     exposureTimeStr: "1/250",
     focalLength: 6.86,
     focalLengthIn35mm: 24,
-    megapixels: MP,
+    megapixels: MP_PRO,
   },
 ];
 
