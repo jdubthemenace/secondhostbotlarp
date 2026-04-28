@@ -2,14 +2,12 @@ import sharp from "sharp";
 import path from "node:path";
 import fs from "node:fs/promises";
 import { spawn } from "node:child_process";
-
 /** Long edge of the 4:3 / 48 MP canvas (matches Apple's main camera output). */
 export const LONG_EDGE = 8000;
 /** Short edge of the 4:3 / 48 MP canvas (matches Apple's main camera output). */
 export const SHORT_EDGE = 6000;
 /** Megapixels reported per processed image. */
 export const TARGET_MEGAPIXELS = 48;
-
 export interface ResizeResult {
   outputPath: string;
   width: number;
@@ -18,7 +16,6 @@ export interface ResizeResult {
   /** "portrait" if input was taller than wide, otherwise "landscape". */
   orientation: "portrait" | "landscape";
 }
-
 /**
  * Resize the input image to a 48 MP / 4:3 canvas matching Apple iPhone main
  * camera output. Output is `8000 x 6000` (landscape) or `6000 x 8000`
@@ -31,14 +28,12 @@ export async function resizeToAppleSensor(
   const dir = path.dirname(inputPath);
   const base = path.basename(inputPath, path.extname(inputPath));
   const outputPath = path.join(dir, `${base}_48mp.jpg`);
-
   const meta = await sharp(inputPath, { failOn: "none" }).rotate().metadata();
   const srcW = meta.width ?? 0;
   const srcH = meta.height ?? 0;
   const isPortrait = srcH > srcW;
   const targetW = isPortrait ? SHORT_EDGE : LONG_EDGE;
   const targetH = isPortrait ? LONG_EDGE : SHORT_EDGE;
-
   await sharp(inputPath, { failOn: "none" })
     .rotate()
     .resize({
@@ -50,7 +45,6 @@ export async function resizeToAppleSensor(
     })
     .jpeg({ quality: 92, mozjpeg: true, chromaSubsampling: "4:2:0" })
     .toFile(outputPath);
-
   const stat = await fs.stat(outputPath);
   return {
     outputPath,
@@ -60,18 +54,15 @@ export async function resizeToAppleSensor(
     orientation: isPortrait ? "portrait" : "landscape",
   };
 }
-
 export interface HeicResult {
   outputPath: string;
   bytes: number;
 }
-
 export interface ExposureSettings {
   iso: number;
   /** Shutter as an EXIF rational string, e.g. "1/250". */
   exposureTimeStr: string;
 }
-
 /**
  * Mean luminance of the input image in the 0-255 range. We use the average of
  * the R, G, B channel means as a fast proxy for perceived brightness — fine
@@ -85,7 +76,6 @@ export async function analyzeBrightness(
   if (channels.length === 0) return 128;
   return channels.reduce((s, c) => s + c.mean, 0) / channels.length;
 }
-
 /**
  * Pick a plausible iPhone model to suggest given the scene's mean luminance.
  * Bright outdoor → newest non-Pro (a casual snap), normal/indoor → Pro,
@@ -97,7 +87,6 @@ export function pickSuggestedModel(meanLuma: number): string {
   if (meanLuma >= 60) return "ip17p";
   return "ip17pm";
 }
-
 /**
  * Map a scene-brightness estimate (0-255) to a believable iPhone
  * (ISO, shutter) pair. Buckets follow how an iPhone's auto-exposure actually
@@ -110,7 +99,6 @@ export function pickSuggestedModel(meanLuma: number): string {
 export function pickRealisticExposure(meanLuma: number): ExposureSettings {
   type Pair = { iso: number; shutter: string };
   let bucket: Pair[];
-
   if (meanLuma >= 180) {
     // Bright sun / snow / beach.
     bucket = [
@@ -160,16 +148,17 @@ export function pickRealisticExposure(meanLuma: number): ExposureSettings {
       { iso: 5000, shutter: "1/8" },
     ];
   }
-
   const pick = bucket[Math.floor(Math.random() * bucket.length)];
   return { iso: pick.iso, exposureTimeStr: pick.shutter };
 }
-
 /**
  * Re-encode a JPEG/PNG into a real HEIC (HEVC) file using libheif's `heif-enc`
  * with the x265 backend. iPhones save photos as HEIC by default, so this
  * matches the on-device file format end-to-end (`FileType: HEIC`,
  * `MIMEType: image/heic`).
+ *
+ * Memory-friendly x265 settings (preset=ultrafast, single pool, no WPP) so
+ * encoding a 48 MP frame doesn't get OOM-killed on small containers.
  */
 export async function encodeAsHeic(
   inputPath: string,
@@ -178,13 +167,11 @@ export async function encodeAsHeic(
   const dir = path.dirname(inputPath);
   const base = path.basename(inputPath, path.extname(inputPath));
   const outputPath = path.join(dir, `${base}.heic`);
-
   await new Promise<void>((resolve, reject) => {
-        const proc = spawn(
+    const proc = spawn(
       "heif-enc",
       [
         "-q", String(quality),
-        "--num-threads", "1",
         "-p", "preset=ultrafast",
         "-p", "pools=1",
         "-p", "frame-threads=1",
@@ -205,7 +192,6 @@ export async function encodeAsHeic(
       else reject(new Error(`heif-enc failed (code ${code}): ${stderr.trim()}`));
     });
   });
-
   const stat = await fs.stat(outputPath);
   return { outputPath, bytes: stat.size };
 }
