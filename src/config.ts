@@ -19,7 +19,7 @@ export const STARTING_CREDITS = 15;
 export const IMAGE_COST = 1;
 
 export const QUEUE_MAX_SIZE = 100;
-export const JOB_TIMEOUT_MS = 60_000;
+export const JOB_TIMEOUT_MS = 300_000;
 export const DEFAULT_RATE_LIMIT_PER_MIN = 30;
 
 export const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
