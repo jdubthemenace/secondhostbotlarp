@@ -6,7 +6,7 @@
 #   - vips     (sharp's native dependency; usually bundled but pinned for safety)
 
 [phases.setup]
-nixPkgs = ["nodejs_24", "libheif", "vips", "x265"]
+nixPkgs = ["nodejs_22", "libheif", "vips", "x265"]
 
 [phases.install]
 cmds = ["npm install --omit=dev=false"]
