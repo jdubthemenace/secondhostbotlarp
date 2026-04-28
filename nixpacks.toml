@@ -4,9 +4,10 @@
 #   - Node 22+ (for the built-in `node:sqlite` module the bot uses)
 #   - libheif (provides the `heif-enc` binary the bot calls to make .heic files)
 #   - vips     (sharp's native dependency; usually bundled but pinned for safety)
+#   - exiftool (used to inject iPhone EXIF metadata into the final HEIC)
 
 [phases.setup]
-nixPkgs = ["nodejs_22", "libheif", "vips", "x265"]
+nixPkgs = ["nodejs_22", "libheif", "vips", "x265", "exiftool"]
 
 [phases.install]
 cmds = ["npm install --omit=dev=false"]
