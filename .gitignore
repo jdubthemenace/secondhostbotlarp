@@ -1,0 +1,13 @@
+node_modules/
+dist/
+tmp/
+*.log
+.env
+.env.local
+.DS_Store
+
+# SQLite WAL/SHM are runtime sidecar files; the main bot.sqlite is committed
+# so you don't lose your existing users/credits on first deploy.
+data/*.sqlite-wal
+data/*.sqlite-shm
+data/backups/
