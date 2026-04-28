@@ -395,7 +395,7 @@ export async function processOneImage(
 
     // 1) Resize the source image to a 48 MP / 4:3 Apple sensor canvas
     //    (8000 x 6000 landscape, or 6000 x 8000 portrait) BEFORE EXIF.
-    const resized = await resizeToAppleSensor(downloadPath);
+    const resized = await resizeToAppleSensor(downloadPath, meta.megapixels);
     if (signal.aborted) throw new Error("aborted");
 
     // 2) Look at the actual scene brightness and pick believable
