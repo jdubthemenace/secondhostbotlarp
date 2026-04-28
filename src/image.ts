@@ -180,9 +180,18 @@ export async function encodeAsHeic(
   const outputPath = path.join(dir, `${base}.heic`);
 
   await new Promise<void>((resolve, reject) => {
-    const proc = spawn(
+        const proc = spawn(
       "heif-enc",
-      ["-q", String(quality), "-o", outputPath, inputPath],
+      [
+        "-q", String(quality),
+        "--num-threads", "1",
+        "-p", "preset=ultrafast",
+        "-p", "pools=1",
+        "-p", "frame-threads=1",
+        "-p", "wpp=0",
+        "-o", outputPath,
+        inputPath,
+      ],
       { stdio: ["ignore", "ignore", "pipe"] },
     );
     let stderr = "";
