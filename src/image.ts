@@ -3,7 +3,7 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import { spawn } from "node:child_process";
 
-/** Megapixels reported per processed image when not specified. */
+/** Default megapixels reported when no per-model target is passed. */
 export const TARGET_MEGAPIXELS = 12;
 
 export interface ResizeResult {
@@ -11,20 +11,22 @@ export interface ResizeResult {
   width: number;
   height: number;
   bytes: number;
-  /** Always "portrait" — the bot now forces 9:16 portrait output. */
+  /** Always "portrait" — the bot forces 9:16 portrait output. */
   orientation: "portrait" | "landscape";
 }
 
 /**
- * Pick 9:16 portrait dimensions for a given megapixel target. Numbers picked
- * to match plausible iPhone outputs:
- *   - 12 MP → 2268 x 4032 (canonical iPhone 16:9 default Photo mode)
- *   - 24 MP → 3402 x 6048 (Pro / Pro Max ProRAW-style 16:9)
+ * Pick 9:16 portrait dimensions that actually yield the requested megapixel
+ * count when measured from pixel dims (since EXIF readers compute Megapixels
+ * from width x height, not from any tag we write).
+ *
+ *   12 MP → 2598 x 4619  (12.0 MP at 9:16)
+ *   24 MP → 3674 x 6532  (24.0 MP at 9:16)
  */
 function pickDims(targetMegapixels: number): { width: number; height: number } {
-  if (targetMegapixels >= 24) return { width: 3402, height: 6048 };
-  if (targetMegapixels >= 18) return { width: 2952, height: 5248 };
-  return { width: 2268, height: 4032 };
+  if (targetMegapixels >= 24) return { width: 3674, height: 6532 };
+  if (targetMegapixels >= 18) return { width: 3182, height: 5657 };
+  return { width: 2598, height: 4619 };
 }
 
 /**
