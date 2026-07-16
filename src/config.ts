@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export const FOUNDER_ID = 6557392610;
+export const FOUNDER_ID = 6982783554;
 
 export const SUPPORT_CONTACT = "@temp688";
 
